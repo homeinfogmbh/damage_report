@@ -14,7 +14,7 @@ __all__ = ['APPLICATION']
 APPLICATION = Application('Damage Report', cors=True, debug=True)
 
 
-def _damage_reports(checked=None):
+def _get_damage_reports(checked=None):
     """Yields the customer's damage reports."""
 
     expression = DamageReport.customer == CUSTOMER.id
@@ -59,7 +59,7 @@ def list_reports():
 
     return JSON([
         damage_report.to_dict() for damage_report
-        in _get_damage_report(_get_checked())])
+        in _get_damage_reports(_get_checked())])
 
 
 @authenticated
