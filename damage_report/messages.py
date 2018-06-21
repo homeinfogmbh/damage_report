@@ -1,6 +1,6 @@
 """WSGI Messages."""
 
-from his import locales, Message
+from his import Message
 
 
 class _CleaningLogMessage(Message):
@@ -9,19 +9,19 @@ class _CleaningLogMessage(Message):
     DOMAIN = 'damage_report'
 
 
-class NoSuchTerminal(_CleaningLogMessage):
+class NoSuchReport(_CleaningLogMessage):
     """Indicates that the respective terminal does not exist."""
 
     STATUS = 404
 
 
-class NoSuchUser(_CleaningLogMessage):
+class ReportToggled(_CleaningLogMessage):
     """Indicates that the respective user does not exist."""
 
-    STATUS = 404
+    STATUS = 200
 
 
-class TerminalUnlocated(_CleaningLogMessage):
+class ReportDeleted(_CleaningLogMessage):
     """Indicates that the respective terminal has no location assigned."""
 
-    STATUS = 404
+    STATUS = 200

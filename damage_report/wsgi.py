@@ -1,147 +1,99 @@
 """Authenticated and authorized HIS services."""
 
-from contextlib import suppress
-from datetime import datetime
-
 from flask import request
 
 from his import CUSTOMER, authenticated, authorized, Application
-from his.messages import NotAnInteger
-from terminallib import Terminal
-from timelib import DATE_FORMAT, DATETIME_BASE, DATETIME_FORMAT
 from wsgilib import JSON
 
-from cleaninglog.messages import NoSuchUser, NoSuchTerminal, TerminalUnlocated
-from digsigdb import CleaningUser, CleaningDate
+from damage_report.messages import NoSuchReport, ReportToggled, ReportDeleted
+from digsigdb import DamageReport
 
 __all__ = ['APPLICATION']
 
 
 APPLICATION = Application('Damage Report', cors=True, debug=True)
-SHORT_TIME_FORMAT = '%H:%M'
-DATETIME_FORMATS = (
-    DATE_FORMAT, DATETIME_FORMAT, SHORT_TIME_FORMAT,
-    DATETIME_BASE.format(DATE_FORMAT, SHORT_TIME_FORMAT))
 
 
-def _parse_datetime(string):
-    """Parses a datetime from the given string."""
+def _damage_reports(checked=None):
+    """Yields the customer's damage reports."""
 
-    if string is None:
+    expression = DamageReport.customer == CUSTOMER.id
+
+    if checked is not None:
+        expression &= DamageReport.checked == int(checked)
+
+    return DamageReport.select().where(expression)
+
+
+def _get_checked():
+    """Returns the checked flag."""
+
+    checked = request.args.get('checked')
+
+    if checked is None:
         return None
 
-    for date_format in DATETIME_FORMATS:
-        with suppress(ValueError):
-            return datetime.strptime(string, date_format)
+    try:
+        checked = int(checked)
+    except ValueError:
+        return None
 
-    raise ValueError('Invalid datetime or time format: {}'.format(string))
-
-
-def _cleaning_user_selects():
-    """Returns a basic expression for cleaning users selection."""
-
-    return (
-        (CleaningUser.created < datetime.now())
-        & (CleaningUser.enabled == 1))
+    return bool(checked)
 
 
-def _users():
-    """Yields the customer's users."""
-
-    return CleaningUser.select().where(
-        (CleaningUser.customer == CUSTOMER.id) & _cleaning_user_selects())
-
-
-def _user(ident):
-    """Returns the respective user."""
+def _get_damage_report(ident):
+    """Returns the respective damage report."""
 
     try:
-        return CleaningUser.select().where(
-            (CleaningUser.id == ident)
-            & (CleaningUser.customer == CUSTOMER.id)
-            & _cleaning_user_selects()).get()
-    except CleaningUser.DoesNotExist:
-        raise NoSuchUser()
-
-
-def _terminal(tid):
-    """Returns the respective terminal."""
-
-    try:
-        return Terminal.select().where(
-            (Terminal.tid == tid) & (Terminal.customer == CUSTOMER.id)).get()
-    except Terminal.DoesNotExist:
-        raise NoSuchTerminal()
-
-
-def _address(terminal):
-    """Returns the terminal's address."""
-
-    try:
-        return terminal.location.address
-    except AttributeError:
-        return TerminalUnlocated()
-
-
-def _entries(start, end, user=None, address=None):
-    """Yields the respective customer's entries."""
-
-    if user is None:
-        expression = CleaningDate.user << [user.id for user in _users()]
-    else:
-        expression = CleaningDate.user == user
-
-    if address is not None:
-        expression &= CleaningDate.address == address
-
-    if start is not None:
-        expression &= CleaningDate.timestamp >= start
-
-    if end is not None:
-        expression &= CleaningDate.timestamp <= end
-
-    return CleaningDate.select().where(expression)
+        return DamageReport.get(
+            (DamageReport.id == ident)
+            & (DamageReport.customer == CUSTOMER.id))
+    except DamageReport.DoesNotExist:
+        raise NoSuchReport()
 
 
 @authenticated
-@authorized('cleaninglog')
-def list_users():
-    """Lists the cleaning log users of the respective customer."""
+@authorized('damage_report')
+def list_reports():
+    """Lists the damage reports of the respective customer."""
 
-    return JSON([user.to_dict() for user in _users()])
+    return JSON([
+        damage_report.to_dict() for damage_report
+        in _get_damage_report(_get_checked())])
 
 
 @authenticated
-@authorized('cleaninglog')
-def list_entries():
+@authorized('damage_report')
+def get_report(ident):
     """Lists the cleaning log entries of the respective customer."""
 
-    start = _parse_datetime(request.args.get('from'))
-    end = _parse_datetime(request.args.get('until'))
+    return JSON(_get_damage_report(ident).to_dict())
 
-    try:
-        user = int(request.args['user'])
-    except KeyError:
-        user = None
-    except (ValueError, TypeError):
-        return NotAnInteger()
-    else:
-        user = _user(user)
 
-    try:
-        tid = int(request.args['terminal'])
-    except KeyError:
-        address = None
-    except (ValueError, TypeError):
-        return NotAnInteger()
-    else:
-        address = _address(_terminal(tid))
+@authenticated
+@authorized('damage_report')
+def toggle_report(ident):
+    """Lists the cleaning log entries of the respective customer."""
 
-    entries = _entries(start, end, user=user, address=address)
-    return JSON([entry.to_dict() for entry in entries])
+    damage_report = _get_damage_report(ident)
+    damage_report.checked = not damage_report.checked
+    damage_report.save()
+    return ReportToggled(checked=damage_report.checked)
+
+
+@authenticated
+@authorized('damage_report')
+def delete_report(ident):
+    """Lists the cleaning log entries of the respective customer."""
+
+    damage_report = _get_damage_report(ident)
+    damage_report.delete_instance()
+    return ReportDeleted()
 
 
 ROUTES = (
-    ('GET', '/', list_entries, 'list_entries'),
-    ('GET', '/users', list_users, 'list_users'))
+    ('GET', '/', list_reports, 'list_reports'),
+    ('GET', '/<int:ident>', get_report, 'get_report'),
+    ('PATCH', '/<int:ident>', toggle_report, 'toggle_report'),
+    ('DELETE', '/<int:ident>', delete_report, 'delete_report'))
 APPLICATION.add_routes(ROUTES)

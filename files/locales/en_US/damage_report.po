@@ -16,11 +16,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Hand\n"
 
-msgid "NoSuchTerminal"
-msgstr "No such terminal."
+msgid "NoSuchReport"
+msgstr "No such damage report."
 
-msgid "NoSuchUser"
-msgstr "No such user."
+msgid "ReportToggled"
+msgstr "Damage report toggled."
 
-msgid "TerminalUnlocated"
-msgstr "Terminal is unlocated."
+msgid "ReportDeleted"
+msgstr "Damage report deleted."
