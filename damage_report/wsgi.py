@@ -55,7 +55,7 @@ def _get_damage_report(ident):
 @authenticated
 @authorized('damage_report')
 def list_reports():
-    """Lists the damage reports of the respective customer."""
+    """Lists the damage reports."""
 
     return JSON([
         damage_report.to_dict() for damage_report
@@ -65,7 +65,7 @@ def list_reports():
 @authenticated
 @authorized('damage_report')
 def get_report(ident):
-    """Lists the cleaning log entries of the respective customer."""
+    """Returns the respective damage report."""
 
     return JSON(_get_damage_report(ident).to_dict())
 
@@ -73,7 +73,7 @@ def get_report(ident):
 @authenticated
 @authorized('damage_report')
 def toggle_report(ident):
-    """Lists the cleaning log entries of the respective customer."""
+    """Toggles the respective damage report."""
 
     damage_report = _get_damage_report(ident)
     damage_report.checked = not damage_report.checked
@@ -84,7 +84,7 @@ def toggle_report(ident):
 @authenticated
 @authorized('damage_report')
 def delete_report(ident):
-    """Lists the cleaning log entries of the respective customer."""
+    """Deletes the respective damage report."""
 
     damage_report = _get_damage_report(ident)
     damage_report.delete_instance()

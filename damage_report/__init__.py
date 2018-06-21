@@ -1,4 +1,4 @@
-"""Microservice for cleaning verifications."""
+"""Microservice for damage reports."""
 
 from damage_report.wsgi import APPLICATION
 

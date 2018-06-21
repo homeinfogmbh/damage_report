@@ -3,25 +3,25 @@
 from his import Message
 
 
-class _CleaningLogMessage(Message):
+class _DamageReportMessage(Message):
     """Abstract base message."""
 
     DOMAIN = 'damage_report'
 
 
-class NoSuchReport(_CleaningLogMessage):
-    """Indicates that the respective terminal does not exist."""
+class NoSuchReport(_DamageReportMessage):
+    """Indicates that the respective damage report does not exist."""
 
     STATUS = 404
 
 
-class ReportToggled(_CleaningLogMessage):
-    """Indicates that the respective user does not exist."""
+class ReportToggled(_DamageReportMessage):
+    """Indicates that the respective damage report was toggled."""
 
     STATUS = 200
 
 
-class ReportDeleted(_CleaningLogMessage):
-    """Indicates that the respective terminal has no location assigned."""
+class ReportDeleted(_DamageReportMessage):
+    """Indicates that the respective damage report was deleted."""
 
     STATUS = 200
