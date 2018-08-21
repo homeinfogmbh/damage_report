@@ -58,7 +58,7 @@ def list_reports():
     """Lists the damage reports."""
 
     return JSON([
-        damage_report.to_dict() for damage_report
+        damage_report.to_json() for damage_report
         in _get_damage_reports(_get_checked())])
 
 
@@ -67,7 +67,7 @@ def list_reports():
 def get_report(ident):
     """Returns the respective damage report."""
 
-    return JSON(_get_damage_report(ident).to_dict())
+    return JSON(_get_damage_report(ident).to_json())
 
 
 @authenticated
