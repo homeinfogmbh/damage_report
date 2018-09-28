@@ -3,6 +3,13 @@
 from his import Message
 
 
+__all__ = [
+    'NoSuchReport',
+    'ReportToggled',
+    'ReportDeleted',
+    'EmailsUpdated']
+
+
 class _DamageReportMessage(Message):
     """Abstract base message."""
 
@@ -23,5 +30,11 @@ class ReportToggled(_DamageReportMessage):
 
 class ReportDeleted(_DamageReportMessage):
     """Indicates that the respective damage report was deleted."""
+
+    STATUS = 200
+
+
+class EmailsUpdated(_DamageReportMessage):
+    """Indicates that the emails were successfully updated."""
 
     STATUS = 200
