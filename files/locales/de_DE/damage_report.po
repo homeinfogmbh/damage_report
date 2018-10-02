@@ -24,3 +24,6 @@ msgstr "Schadensmeldung umgeschaltet."
 
 msgid "ReportDeleted"
 msgstr "Schadensmeldung gelöscht."
+
+msgid "EmailsUpdated"
+msgstr "E-Mail Adressen aktualisiert."

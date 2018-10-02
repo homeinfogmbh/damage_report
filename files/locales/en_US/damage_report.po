@@ -24,3 +24,6 @@ msgstr "Damage report toggled."
 
 msgid "ReportDeleted"
 msgstr "Damage report deleted."
+
+msgid "EmailsUpdated"
+msgstr "Email addresses updated."
