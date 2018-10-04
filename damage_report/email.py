@@ -22,10 +22,19 @@ def get_emails(message):
         recipient = notification_email.email
         subject = notification_email.subject or CONFIG['email']['subject']
         address = message.address
-        subject = subject.format(address.street, address.house_number)
+        subject = subject.format(
+            message.damage_type, address.street, address.house_number)
         sender = CONFIG['email']['from']
-        html = message.message if notification_email.html else None
-        plain = None if notification_email.html else message.message
+        message = 'Schadensmeldung "{}" von {} ({}):'.format(
+            message.damage_type, message.name, message.contact)
+
+        if notification_email.html:
+            html = message + '<br/><br/>' + message.message
+            plain = None
+        else:
+            plain = message + '\n\n' + message.message
+            html = None
+
         yield EMail(subject, sender, recipient, plain=plain, html=html)
 
 
