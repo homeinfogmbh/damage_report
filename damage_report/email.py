@@ -14,34 +14,35 @@ MAILER = Mailer.from_config(CONFIG['email'])
 
 
 @coerce(frozenset)
-def get_emails(message):
+def get_emails(damage_report):
     """Yields notification emails."""
 
     for notification_email in NotificationEmail.select().where(
-            NotificationEmail.customer == message.customer):
+            NotificationEmail.customer == damage_report.customer):
         recipient = notification_email.email
         subject = notification_email.subject or CONFIG['email']['subject']
-        address = message.address
+        address = damage_report.address
         subject = subject.format(
-            message.damage_type, address.street, address.house_number)
+            damage_report.damage_type, address.street, address.house_number)
         sender = CONFIG['email']['from']
         message = 'Schadensmeldung "{}" von {} ({}):'.format(
-            message.damage_type, message.name, message.contact)
+            damage_report.damage_type, damage_report.name,
+            damage_report.contact)
 
         if notification_email.html:
-            html = message + '<br/><br/>' + message.message
+            html = message + '<br/><br/>' + damage_report.message
             plain = None
         else:
-            plain = message + '\n\n' + message.message
+            plain = message + '\n\n' + damage_report.message
             html = None
 
         yield EMail(subject, sender, recipient, plain=plain, html=html)
 
 
-def email(message):
+def email(damage_report):
     """Sends notifications emails."""
 
-    emails = get_emails(message)
+    emails = get_emails(damage_report)
 
     if emails:
         return MAILER.send(emails)
