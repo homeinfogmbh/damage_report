@@ -15,7 +15,7 @@ from damage_report.orm import DamageReport, NotificationEmail
 __all__ = ['APPLICATION']
 
 
-APPLICATION = Application('Damage Report', cors=True, debug=True)
+APPLICATION = Application('Damage Report', debug=True)
 
 
 def _get_damage_reports(checked=None):
