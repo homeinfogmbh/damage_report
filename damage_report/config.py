@@ -1,9 +1,9 @@
 """Configuration file parser."""
 
-from configlib import INIParser
+from configlib import loadcfg
 
 
 __all__ = ['CONFIG']
 
 
-CONFIG = INIParser('/usr/local/etc/damage_report.conf')
+CONFIG = loadcfg('damage_report.conf')
