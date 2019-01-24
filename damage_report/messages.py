@@ -1,40 +1,18 @@
 """WSGI Messages."""
 
-from his import Message
+from his import HIS_MESSAGE_FACILITY
 
 
 __all__ = [
-    'NoSuchReport',
-    'ReportToggled',
-    'ReportDeleted',
-    'EmailsUpdated']
+    'NO_SUCH_REPORT',
+    'REPORT_TOGGLED',
+    'REPORT_DELETED',
+    'EMAILS_UPDATED']
 
 
-class _DamageReportMessage(Message):
-    """Abstract base message."""
-
-    DOMAIN = 'damage_report'
-
-
-class NoSuchReport(_DamageReportMessage):
-    """Indicates that the respective damage report does not exist."""
-
-    STATUS = 404
-
-
-class ReportToggled(_DamageReportMessage):
-    """Indicates that the respective damage report was toggled."""
-
-    STATUS = 200
-
-
-class ReportDeleted(_DamageReportMessage):
-    """Indicates that the respective damage report was deleted."""
-
-    STATUS = 200
-
-
-class EmailsUpdated(_DamageReportMessage):
-    """Indicates that the emails were successfully updated."""
-
-    STATUS = 200
+DR_MESSAGE_DOMAIN = HIS_MESSAGE_FACILITY.domain('damage_report')
+DR_MESSAGE = DR_MESSAGE_DOMAIN.message
+NO_SUCH_REPORT = DR_MESSAGE('The requested report does not exist.', status=404)
+REPORT_TOGGLED = DR_MESSAGE('The report has been toggled.', status=200)
+REPORT_DELETED = DR_MESSAGE('The report has been deleted.', status=200)
+EMAILS_UPDATED = DR_MESSAGE('The emails list has benn updated.', status=200)

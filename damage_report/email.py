@@ -44,7 +44,7 @@ def email(damage_report):
 
     emails = get_emails(damage_report)
 
-    if emails:
+    if emails:  # pylint: disable=W0125
         return MAILER.send(emails)
 
     return None

@@ -16,14 +16,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Hand\n"
 
-msgid "NoSuchReport"
-msgstr "Keine solche Schadensmeldung vorhanden."
+#: messages.py:15
+msgid "The requested report does not exist."
+msgstr "Die gwewünschte Schadensmeldung existiert nicht."
 
-msgid "ReportToggled"
-msgstr "Schadensmeldung umgeschaltet."
+#: messages.py:16
+msgid "The report has been toggled."
+msgstr "Der Status der Schadensmeldung wurde umgeschaltet."
 
-msgid "ReportDeleted"
-msgstr "Schadensmeldung gelöscht."
+#: messages.py:17
+msgid "The report has been deleted."
+msgstr "Die Schadensmeldung wurde gelöscht."
 
-msgid "EmailsUpdated"
-msgstr "E-Mail Adressen aktualisiert."
+#: messages.py:18
+msgid "The emails list has benn updated."
+msgstr "Die Liste der E-Mail Adressen wurde aktualisiert."

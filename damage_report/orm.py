@@ -23,7 +23,7 @@ DATABASE = MySQLDatabase.from_config(CONFIG['db'])
 class _DamageReportModel(JSONModel):
     """Basic model for this database."""
 
-    class Meta:     # pylint: disable=C0111
+    class Meta:     # pylint: disable=C0111,R0903
         database = DATABASE
         schema = database.database
 
@@ -31,7 +31,7 @@ class _DamageReportModel(JSONModel):
 class DamageReport(_DamageReportModel):
     """Damage reports."""
 
-    class Meta:     # pylint: disable=C0111
+    class Meta:     # pylint: disable=C0111,R0903
         table_name = 'damage_report'
 
     customer = ForeignKeyField(Customer, column_name='customer')
@@ -66,7 +66,7 @@ class DamageReport(_DamageReportModel):
 class NotificationEmail(_DamageReportModel):
     """Stores emails for notifications about new messages."""
 
-    class Meta:     # pylint: disable=C0111
+    class Meta:     # pylint: disable=C0111,R0903
         table_name = 'notification_emails'
 
     customer = ForeignKeyField(Customer, column_name='customer')

@@ -6,10 +6,10 @@ from his import CUSTOMER, authenticated, authorized, admin, Application
 from wsgilib import JSON
 
 
-from damage_report.messages import EmailsUpdated
-from damage_report.messages import NoSuchReport
-from damage_report.messages import ReportDeleted
-from damage_report.messages import ReportToggled
+from damage_report.messages import EMAILS_UPDATED
+from damage_report.messages import NO_SUCH_REPORT
+from damage_report.messages import REPORT_DELETED
+from damage_report.messages import REPORT_TOGGLED
 from damage_report.orm import DamageReport, NotificationEmail
 
 __all__ = ['APPLICATION']
@@ -53,7 +53,7 @@ def _get_damage_report(ident):
             (DamageReport.id == ident)
             & (DamageReport.customer == CUSTOMER.id))
     except DamageReport.DoesNotExist:
-        raise NoSuchReport()
+        raise NO_SUCH_REPORT
 
 
 @authenticated
@@ -82,7 +82,7 @@ def toggle_report(ident):
     damage_report = _get_damage_report(ident)
     damage_report.checked = not damage_report.checked
     damage_report.save()
-    return ReportToggled(checked=damage_report.checked)
+    return REPORT_TOGGLED.update(checked=damage_report.checked)
 
 
 @authenticated
@@ -92,7 +92,7 @@ def delete_report(ident):
 
     damage_report = _get_damage_report(ident)
     damage_report.delete_instance()
-    return ReportDeleted()
+    return REPORT_DELETED
 
 
 @authenticated
@@ -122,7 +122,7 @@ def set_emails():
         email.save()
         ids.append(email.id)
 
-    return EmailsUpdated(ids=ids)
+    return EMAILS_UPDATED.update(ids=ids)
 
 
 ROUTES = (
