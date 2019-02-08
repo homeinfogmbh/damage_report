@@ -5,12 +5,12 @@ from flask import request
 from his import CUSTOMER, authenticated, authorized, admin, Application
 from wsgilib import JSON
 
-
 from damage_report.messages import EMAILS_UPDATED
 from damage_report.messages import NO_SUCH_REPORT
 from damage_report.messages import REPORT_DELETED
 from damage_report.messages import REPORT_TOGGLED
 from damage_report.orm import DamageReport, NotificationEmail
+
 
 __all__ = ['APPLICATION']
 
