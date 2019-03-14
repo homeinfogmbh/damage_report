@@ -1,6 +1,6 @@
 """WSGI Messages."""
 
-from his import HIS_MESSAGE_FACILITY
+from wsgilib import JSONMessage
 
 
 __all__ = [
@@ -10,9 +10,8 @@ __all__ = [
     'EMAILS_UPDATED']
 
 
-DR_MESSAGE_DOMAIN = HIS_MESSAGE_FACILITY.domain('damage_report')
-DR_MESSAGE = DR_MESSAGE_DOMAIN.message
-NO_SUCH_REPORT = DR_MESSAGE('The requested report does not exist.', status=404)
-REPORT_TOGGLED = DR_MESSAGE('The report has been toggled.', status=200)
-REPORT_DELETED = DR_MESSAGE('The report has been deleted.', status=200)
-EMAILS_UPDATED = DR_MESSAGE('The emails list has benn updated.', status=200)
+NO_SUCH_REPORT = JSONMessage(
+    'The requested report does not exist.', status=404)
+REPORT_TOGGLED = JSONMessage('The report has been toggled.', status=200)
+REPORT_DELETED = JSONMessage('The report has been deleted.', status=200)
+EMAILS_UPDATED = JSONMessage('The emails list has benn updated.', status=200)
