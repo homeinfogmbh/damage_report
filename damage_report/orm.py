@@ -9,6 +9,7 @@ from peewee import ForeignKeyField
 from peewee import TextField
 
 from mdb import Address, Customer
+from notificationlib import get_orm_model
 from peeweeplus import MySQLDatabase, JSONModel
 
 from damage_report.config import CONFIG
@@ -63,20 +64,4 @@ class DamageReport(_DamageReportModel):
         return json
 
 
-class NotificationEmail(_DamageReportModel):
-    """Stores emails for notifications about new messages."""
-
-    class Meta:     # pylint: disable=C0111,R0903
-        table_name = 'notification_emails'
-
-    customer = ForeignKeyField(Customer, column_name='customer')
-    email = CharField(255)
-    subject = CharField(255, null=True)
-    html = BooleanField(default=False)
-
-    @classmethod
-    def from_json(cls, json, customer, **kwargs):
-        """Creates a notification email for the respective customer."""
-        record = super().from_json(json, **kwargs)
-        record.customer = customer
-        return record
+NotificationEmail = get_orm_model(_DamageReportModel)

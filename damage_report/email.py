@@ -1,16 +1,14 @@
 """Emailing of new damage reports."""
 
-from emaillib import EMail, Mailer
+from emaillib import EMail
 from functoolsplus import coerce
+from notificationlib import EMailFacility
 
 from damage_report.config import CONFIG
 from damage_report.orm import NotificationEmail
 
 
 __all__ = ['email']
-
-
-MAILER = Mailer.from_config(CONFIG['email'])
 
 
 @coerce(frozenset)
@@ -39,12 +37,5 @@ def get_emails(damage_report):
         yield EMail(subject, sender, recipient, plain=plain, html=html)
 
 
-def email(damage_report):
-    """Sends notifications emails."""
-
-    emails = get_emails(damage_report)
-
-    if emails:  # pylint: disable=W0125
-        return MAILER.send(emails)
-
-    return None
+EMAIL_FACILITY = EMailFacility(CONFIG['email'], get_emails)
+email = EMAIL_FACILITY.email    # pylint: disable=C0103
