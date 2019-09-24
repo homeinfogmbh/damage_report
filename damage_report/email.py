@@ -2,7 +2,7 @@
 
 from emaillib import EMail
 from functoolsplus import coerce
-from notificationlib import EMailFacility
+from notificationlib import get_email_func
 
 from damage_report.config import CONFIG
 from damage_report.orm import NotificationEmail
@@ -37,5 +37,4 @@ def get_emails(damage_report):
         yield EMail(subject, sender, recipient, plain=plain, html=html)
 
 
-EMAIL_FACILITY = EMailFacility(CONFIG['email'], get_emails)
-email = EMAIL_FACILITY.email    # pylint: disable=C0103
+email = get_email_func(get_emails)  # pylint: disable=C0103
