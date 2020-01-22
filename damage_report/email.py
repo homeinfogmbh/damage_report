@@ -21,7 +21,8 @@ def get_emails(damage_report):
         subject = notification_email.subject or CONFIG['email']['subject']
         address = damage_report.address
         subject = subject.format(
-            damage_report.damage_type, address.street, address.house_number)
+            damage_report.damage_type, address.street, address.house_number,
+            address.zip_code, address.city)
         sender = CONFIG['email']['from']
         message = 'Schadensmeldung "{}" von {} ({}):'.format(
             damage_report.damage_type, damage_report.name,
