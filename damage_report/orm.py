@@ -9,7 +9,7 @@ from peewee import ForeignKeyField
 from peewee import TextField
 
 from mdb import Address, Customer
-from notificationlib import get_orm_model
+from notificationlib import get_email_orm_model
 from peeweeplus import MySQLDatabase, JSONModel
 
 from damage_report.config import CONFIG
@@ -64,4 +64,4 @@ class DamageReport(_DamageReportModel):
         return json
 
 
-NotificationEmail = get_orm_model(_DamageReportModel)
+NotificationEmail = get_email_orm_model(_DamageReportModel)
