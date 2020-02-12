@@ -45,11 +45,11 @@ class DamageReport(_DamageReportModel):
     checked = BooleanField(default=False)
 
     @classmethod
-    def from_json(cls, json, customer, address):
+    def from_json(cls, json, customer, address, **kwargs):
         """Creates a new entry from the respective
         customer, address and dictionary.
         """
-        record = super().from_json(json)
+        record = super().from_json(json, **kwargs)
         record.customer = customer
         record.address = address
         return record
