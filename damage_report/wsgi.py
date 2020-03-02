@@ -99,10 +99,11 @@ GET_EMAILS, SET_EMAILS = get_wsgi_funcs('damage_report', NotificationEmail)
 
 
 ROUTES = (
-    ('GET', '/report', list_reports, 'list_reports'),
-    ('GET', '/report/<int:ident>', get_report, 'get_report'),
-    ('PATCH', '/report/<int:ident>', toggle_report, 'toggle_report'),
-    ('DELETE', '/report/<int:ident>', delete_report, 'delete_report'),
-    ('GET', '/email', GET_EMAILS, 'get_emails'),
-    ('POST', '/email', SET_EMAILS, 'set_emails'))
+    ('GET', '/report', list_reports),
+    ('GET', '/report/<int:ident>', get_report),
+    ('PATCH', '/report/<int:ident>', toggle_report),
+    ('DELETE', '/report/<int:ident>', delete_report),
+    ('GET', '/email', GET_EMAILS),
+    ('POST', '/email', SET_EMAILS)
+)
 APPLICATION.add_routes(ROUTES)
