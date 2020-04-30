@@ -6,9 +6,11 @@ from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
+from peewee import IntegerField
 from peewee import TextField
 
 from comcatlib import User
+from filedb import FileProperty
 from mdb import Address, Customer
 from notificationlib import get_email_orm_model
 from peeweeplus import MySQLDatabase, JSONModel
@@ -17,7 +19,7 @@ from terminallib import Deployment
 from damage_report.config import CONFIG
 
 
-__all__ = ['DamageReport', 'NotificationEmail']
+__all__ = ['DamageReport', 'Attachment', 'NotificationEmail']
 
 
 DATABASE = MySQLDatabase.from_config(CONFIG['db'])
@@ -70,6 +72,16 @@ class DamageReport(_DamageReportModel):
             json['submitter'] = self.submitter.to_json()
 
         return json
+
+
+class Attachment(_DamageReportModel):
+    """Attachment to a damage report."""
+
+    damage_report = ForeignKeyField(
+        DamageReport, column_name='damage_report', backref='attachments',
+        on_delete='CASCADE')
+    file = IntegerField()
+    data = FileProperty(file)
 
 
 NotificationEmail = get_email_orm_model(_DamageReportModel)
