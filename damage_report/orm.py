@@ -8,7 +8,6 @@ from peewee import DateTimeField
 from peewee import ForeignKeyField
 from peewee import TextField
 
-from comcatlib import User
 from filedb import File
 from mdb import Address, Customer
 from notificationlib import get_email_orm_model
@@ -42,7 +41,6 @@ class DamageReport(_DamageReportModel):
     address = ForeignKeyField(Address, column_name='address')
     deployment = ForeignKeyField(
         Deployment, column_name='deployment', null=True)
-    submitter = ForeignKeyField(User, column_name='submitter', null=True)
     message = TextField()
     name = CharField(255)
     contact = CharField(255, null=True, default=None)
