@@ -6,11 +6,10 @@ from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
-from peewee import IntegerField
 from peewee import TextField
 
 from comcatlib import User
-from filedb import FileProperty
+from filedb import File
 from mdb import Address, Customer
 from notificationlib import get_email_orm_model
 from peeweeplus import MySQLDatabase, JSONModel
@@ -80,8 +79,7 @@ class Attachment(_DamageReportModel):
     damage_report = ForeignKeyField(
         DamageReport, column_name='damage_report', backref='attachments',
         on_delete='CASCADE')
-    file = IntegerField()
-    data = FileProperty(file)
+    file = ForeignKeyField(File, column_name='file')
 
 
 NotificationEmail = get_email_orm_model(_DamageReportModel)
