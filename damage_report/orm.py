@@ -9,7 +9,6 @@ from peewee import ForeignKeyField
 from peewee import TextField
 
 from filedb import File
-from hwdb import Deployment
 from mdb import Address, Customer
 from notificationlib import get_email_orm_model
 from peeweeplus import MySQLDatabase, JSONModel
@@ -39,8 +38,6 @@ class DamageReport(_DamageReportModel):
 
     customer = ForeignKeyField(Customer, column_name='customer')
     address = ForeignKeyField(Address, column_name='address')
-    deployment = ForeignKeyField(
-        Deployment, column_name='deployment', null=True, on_delete='SET NULL')
     message = TextField()
     name = CharField(255)
     contact = CharField(255, null=True, default=None)
@@ -58,16 +55,10 @@ class DamageReport(_DamageReportModel):
         record.address = address
         return record
 
-    def to_json(self, deployment=False, submitter=False, **kwargs):
+    def to_json(self, **kwargs):
         """Returns a JSON-ish dictionary."""
         json = super().to_json(**kwargs)
-
-        if deployment and self.deployment:
-            json['deployment'] = self.deployment.to_json()
-
-        if submitter and self.submitter:
-            json['submitter'] = self.submitter.to_json()
-
+        json['address'] = self.address.to_json()
         return json
 
 
