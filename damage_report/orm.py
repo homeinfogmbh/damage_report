@@ -40,7 +40,7 @@ class DamageReport(_DamageReportModel):
     customer = ForeignKeyField(Customer, column_name='customer')
     address = ForeignKeyField(Address, column_name='address')
     deployment = ForeignKeyField(
-        Deployment, column_name='deployment', null=True)
+        Deployment, column_name='deployment', null=True, on_delete='SET NULL')
     message = TextField()
     name = CharField(255)
     contact = CharField(255, null=True, default=None)
