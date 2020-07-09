@@ -9,10 +9,10 @@ from peewee import ForeignKeyField
 from peewee import TextField
 
 from filedb import File
+from hwdb import Deployment
 from mdb import Address, Customer
 from notificationlib import get_email_orm_model
 from peeweeplus import MySQLDatabase, JSONModel
-from terminallib import Deployment
 
 from damage_report.config import CONFIG
 
