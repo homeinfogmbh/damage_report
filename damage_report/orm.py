@@ -42,6 +42,7 @@ class DamageReport(_DamageReportModel):
     name = CharField(255)
     contact = CharField(255, null=True, default=None)
     damage_type = CharField(255)
+    annotation = TextField(null=True)
     timestamp = DateTimeField(default=datetime.now)
     checked = BooleanField(default=False)
 

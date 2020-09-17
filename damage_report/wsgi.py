@@ -8,7 +8,7 @@ from wsgilib import JSON
 
 from damage_report.messages import NO_SUCH_REPORT
 from damage_report.messages import REPORT_DELETED
-from damage_report.messages import REPORT_TOGGLED
+from damage_report.messages import REPORT_PATCHED
 from damage_report.orm import DamageReport, NotificationEmail
 
 
@@ -76,13 +76,13 @@ def get_report(ident):
 
 @authenticated
 @authorized('damage_report')
-def toggle_report(ident):
-    """Toggles the respective damage report."""
+def patch_report(ident):
+    """patches the respective damage report."""
 
     damage_report = _get_damage_report(ident)
-    damage_report.checked = not damage_report.checked
+    damage_report.patch_json(request.json)
     damage_report.save()
-    return REPORT_TOGGLED.update(checked=damage_report.checked)
+    return REPORT_PATCHED
 
 
 @authenticated
@@ -101,7 +101,7 @@ GET_EMAILS, SET_EMAILS = get_wsgi_funcs('damage_report', NotificationEmail)
 ROUTES = (
     ('GET', '/report', list_reports),
     ('GET', '/report/<int:ident>', get_report),
-    ('PATCH', '/report/<int:ident>', toggle_report),
+    ('PATCH', '/report/<int:ident>', patch_report),
     ('DELETE', '/report/<int:ident>', delete_report),
     ('GET', '/email', GET_EMAILS),
     ('POST', '/email', SET_EMAILS)
