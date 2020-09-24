@@ -4,12 +4,13 @@ from flask import request
 
 from his import CUSTOMER, authenticated, authorized, Application
 from notificationlib import get_wsgi_funcs
-from wsgilib import JSON
+from wsgilib import Binary, JSON
 
+from damage_report.messages import NO_SUCH_ATTACHMENT
 from damage_report.messages import NO_SUCH_REPORT
 from damage_report.messages import REPORT_DELETED
 from damage_report.messages import REPORT_PATCHED
-from damage_report.orm import DamageReport, NotificationEmail
+from damage_report.orm import Attachment, DamageReport, NotificationEmail
 
 
 __all__ = ['APPLICATION']
@@ -48,12 +49,25 @@ def _get_checked():
 def _get_damage_report(ident):
     """Returns the respective damage report."""
 
+    condition = DamageReport.id == ident
+    condition &= DamageReport.customer == CUSTOMER.id
+
     try:
-        return DamageReport.get(
-            (DamageReport.id == ident)
-            & (DamageReport.customer == CUSTOMER.id))
+        return DamageReport.get(condition)
     except DamageReport.DoesNotExist:
-        raise NO_SUCH_REPORT
+        raise NO_SUCH_REPORT from None
+
+
+def _get_attachment(ident):
+    """Returns the respective attachment."""
+
+    condition = Attachment.id == ident
+    condition &= DamageReport.customer == CUSTOMER.id
+
+    try:
+        return Attachment.select().join(DamageReport).where(condition).get()
+    except Attachment.DoesNotExist:
+        raise NO_SUCH_ATTACHMENT from None
 
 
 @authenticated
@@ -95,6 +109,15 @@ def delete_report(ident):
     return REPORT_DELETED
 
 
+@authenticated
+@authorized('damage_report')
+def get_attachment(ident):
+    """Returns the respective attachment."""
+
+    attachment = get_attachment(ident)
+    return Binary(attachment.file.bytes)
+
+
 GET_EMAILS, SET_EMAILS = get_wsgi_funcs('damage_report', NotificationEmail)
 
 
@@ -103,6 +126,7 @@ ROUTES = (
     ('GET', '/report/<int:ident>', get_report),
     ('PATCH', '/report/<int:ident>', patch_report),
     ('DELETE', '/report/<int:ident>', delete_report),
+    ('GET', '/report/attachment/<int:ident>', get_attachment),
     ('GET', '/email', GET_EMAILS),
     ('POST', '/email', SET_EMAILS)
 )
