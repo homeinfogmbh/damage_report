@@ -60,6 +60,7 @@ class DamageReport(_DamageReportModel):
         """Returns a JSON-ish dictionary."""
         json = super().to_json(**kwargs)
         json['address'] = self.address.to_json()
+        json['attachments'] = [att.id for att in self.attachments]
         return json
 
 
