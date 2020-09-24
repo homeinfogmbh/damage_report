@@ -126,7 +126,7 @@ ROUTES = (
     ('GET', '/report/<int:ident>', get_report),
     ('PATCH', '/report/<int:ident>', patch_report),
     ('DELETE', '/report/<int:ident>', delete_report),
-    ('GET', '/report/attachment/<int:ident>', get_attachment),
+    ('GET', '/attachment/<int:ident>', get_attachment),
     ('GET', '/email', GET_EMAILS),
     ('POST', '/email', SET_EMAILS)
 )
