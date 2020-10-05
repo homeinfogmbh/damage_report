@@ -56,11 +56,16 @@ class DamageReport(_DamageReportModel):
         record.address = address
         return record
 
-    def to_json(self, **kwargs):
+    def to_json(self, *, address=True, attachments=False, **kwargs):
         """Returns a JSON-ish dictionary."""
         json = super().to_json(**kwargs)
-        json['address'] = self.address.to_json()
-        json['attachments'] = [att.id for att in self.attachments]
+
+        if address:
+            json['address'] = self.address.to_json()
+
+        if attachments:
+            json['attachments'] = [att.to_json() for att in self.attachments]
+
         return json
 
 
