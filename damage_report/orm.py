@@ -3,15 +3,13 @@
 from datetime import datetime
 
 from peewee import BooleanField
-from peewee import CharField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
-from peewee import TextField
 
 from filedb import File
 from mdb import Address, Customer
 from notificationlib import get_email_orm_model
-from peeweeplus import MySQLDatabase, JSONModel
+from peeweeplus import HTMLCharField, HTMLTextField, MySQLDatabase, JSONModel
 
 from damage_report.config import CONFIG
 
@@ -38,11 +36,11 @@ class DamageReport(_DamageReportModel):
 
     customer = ForeignKeyField(Customer, column_name='customer')
     address = ForeignKeyField(Address, column_name='address')
-    message = TextField()
-    name = CharField(255)
-    contact = CharField(255, null=True, default=None)
-    damage_type = CharField(255)
-    annotation = TextField(null=True)
+    message = HTMLTextField()
+    name = HTMLCharField(255)
+    contact = HTMLCharField(255, null=True, default=None)
+    damage_type = HTMLCharField(255)
+    annotation = HTMLTextField(null=True)
     timestamp = DateTimeField(default=datetime.now)
     checked = BooleanField(default=False)
 
