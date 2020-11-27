@@ -1,5 +1,6 @@
 """Damage report ORM models."""
 
+from __future__ import annotations
 from datetime import datetime
 
 from peewee import BooleanField
@@ -20,7 +21,7 @@ __all__ = ['DamageReport', 'Attachment', 'NotificationEmail']
 DATABASE = MySQLDatabase.from_config(CONFIG['db'])
 
 
-class _DamageReportModel(JSONModel):
+class _DamageReportModel(JSONModel):    # pylint: disable=R0903
     """Basic model for this database."""
 
     class Meta:     # pylint: disable=C0111,R0903
@@ -45,7 +46,8 @@ class DamageReport(_DamageReportModel):
     checked = BooleanField(default=False)
 
     @classmethod
-    def from_json(cls, json, customer, address, **kwargs):
+    def from_json(cls, json: dict, customer: Customer, address: Address,
+                  **kwargs) -> DamageReport:
         """Creates a new entry from the respective
         customer, address and dictionary.
         """
@@ -54,7 +56,8 @@ class DamageReport(_DamageReportModel):
         record.address = address
         return record
 
-    def to_json(self, *, address=True, attachments=False, **kwargs):
+    def to_json(self, *, address: bool = True, attachments: bool = False,
+                **kwargs) -> dict:
         """Returns a JSON-ish dictionary."""
         json = super().to_json(**kwargs)
 
@@ -67,7 +70,7 @@ class DamageReport(_DamageReportModel):
         return json
 
 
-class Attachment(_DamageReportModel):
+class Attachment(_DamageReportModel):   # pylint: disable=R0903
     """Attachment to a damage report."""
 
     damage_report = ForeignKeyField(

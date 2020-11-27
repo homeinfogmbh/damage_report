@@ -1,10 +1,12 @@
 """Authenticated and authorized HIS services."""
 
+from typing import Iterable
+
 from flask import request
 
 from his import CUSTOMER, authenticated, authorized, Application
 from notificationlib import get_wsgi_funcs
-from wsgilib import Binary, JSON
+from wsgilib import Binary, JSON, JSONMessage
 
 from damage_report.messages import NO_SUCH_ATTACHMENT
 from damage_report.messages import NO_SUCH_REPORT
@@ -19,7 +21,7 @@ __all__ = ['APPLICATION']
 APPLICATION = Application('Damage Report', debug=True)
 
 
-def _get_damage_reports(checked=None):
+def _get_damage_reports(checked: bool = None) -> Iterable[DamageReport]:
     """Yields the customer's damage reports."""
 
     expression = DamageReport.customer == CUSTOMER.id
@@ -30,7 +32,7 @@ def _get_damage_reports(checked=None):
     return DamageReport.select().where(expression)
 
 
-def _get_checked():
+def _get_checked() -> bool:
     """Returns the checked flag."""
 
     checked = request.args.get('checked')
@@ -46,7 +48,7 @@ def _get_checked():
     return bool(checked)
 
 
-def _get_damage_report(ident):
+def _get_damage_report(ident: int) -> DamageReport:
     """Returns the respective damage report."""
 
     condition = DamageReport.id == ident
@@ -58,7 +60,7 @@ def _get_damage_report(ident):
         raise NO_SUCH_REPORT from None
 
 
-def _get_attachment(ident):
+def _get_attachment(ident: int) -> Attachment:
     """Returns the respective attachment."""
 
     condition = Attachment.id == ident
@@ -72,7 +74,7 @@ def _get_attachment(ident):
 
 @authenticated
 @authorized('damage_report')
-def list_reports():
+def list_reports() -> JSON:
     """Lists the damage reports."""
 
     return JSON([
@@ -82,7 +84,7 @@ def list_reports():
 
 @authenticated
 @authorized('damage_report')
-def get_report(ident):
+def get_report(ident: int) -> JSON:
     """Returns the respective damage report."""
 
     return JSON(_get_damage_report(ident).to_json())
@@ -90,7 +92,7 @@ def get_report(ident):
 
 @authenticated
 @authorized('damage_report')
-def patch_report(ident):
+def patch_report(ident: int) -> JSONMessage:
     """patches the respective damage report."""
 
     damage_report = _get_damage_report(ident)
@@ -101,7 +103,7 @@ def patch_report(ident):
 
 @authenticated
 @authorized('damage_report')
-def delete_report(ident):
+def delete_report(ident: int) -> JSONMessage:
     """Deletes the respective damage report."""
 
     damage_report = _get_damage_report(ident)
@@ -111,7 +113,7 @@ def delete_report(ident):
 
 @authenticated
 @authorized('damage_report')
-def get_attachment(ident):
+def get_attachment(ident: int) -> JSONMessage:
     """Returns the respective attachment."""
 
     attachment = get_attachment(ident)
