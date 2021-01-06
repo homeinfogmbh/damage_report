@@ -65,7 +65,10 @@ class DamageReport(_DamageReportModel):
             json['address'] = self.address.to_json()
 
         if attachments:
-            json['attachments'] = [att.to_json() for att in self.attachments]
+            json['attachments'] = [
+                attachment.to_json(skip={'damageReport'})
+                for attachment in self.attachments
+            ]
 
         return json
 
