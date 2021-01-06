@@ -1,5 +1,6 @@
 """Authenticated and authorized HIS services."""
 
+from time import time
 from typing import Iterable
 
 from flask import request
@@ -121,8 +122,17 @@ def delete_report(ident: int) -> JSONMessage:
 def get_attachment(ident: int) -> JSONMessage:
     """Returns the respective attachment."""
 
+    mark = time()
     attachment = get_attachment(ident)
-    return Binary(attachment.file.bytes)
+    print('Get from DB:', time() - mark, flush=True)
+    mark = time()
+    bytes_ = attachment.file.bytes
+    print('Get bytes:', time() - mark, flush=True)
+    mark = time()
+    response = Binary(bytes_)
+    print('Make response:', time() - mark, flush=True)
+    mark = time()
+    return response
 
 
 GET_EMAILS, SET_EMAILS = get_wsgi_funcs('damage_report', NotificationEmail)
