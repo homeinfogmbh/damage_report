@@ -32,7 +32,7 @@ def _get_damage_reports(checked: bool = None) -> Iterable[DamageReport]:
     return DamageReport.select().where(expression)
 
 
-def _get_checked() -> bool:
+def _get_checked_flag() -> bool:
     """Returns the checked flag."""
 
     checked = request.args.get('checked')
@@ -77,9 +77,11 @@ def _get_attachment(ident: int) -> Attachment:
 def list_reports() -> JSON:
     """Lists the damage reports."""
 
+    address = 'address' in request.args
+    attachments = 'attachments' in request.args
     return JSON([
-        damage_report.to_json() for damage_report
-        in _get_damage_reports(_get_checked())])
+        damage_report.to_json(address=address, attachments=attachments)
+        for damage_report in _get_damage_reports(_get_checked_flag())])
 
 
 @authenticated
@@ -87,7 +89,10 @@ def list_reports() -> JSON:
 def get_report(ident: int) -> JSON:
     """Returns the respective damage report."""
 
-    return JSON(_get_damage_report(ident).to_json())
+    address = 'address' in request.args
+    attachments = 'attachments' in request.args
+    return JSON(_get_damage_report(ident).to_json(
+        address=address, attachments=attachments))
 
 
 @authenticated
