@@ -1,9 +1,8 @@
 """Emailing of new damage reports."""
 
-from typing import Generator
+from typing import Iterator
 
 from emaillib import EMail
-from functoolsplus import coerce
 from notificationlib import get_email_func
 
 from damage_report.config import CONFIG
@@ -13,8 +12,7 @@ from damage_report.orm import DamageReport, NotificationEmail
 __all__ = ['email']
 
 
-@coerce(frozenset)
-def get_emails(damage_report: DamageReport) -> Generator[EMail, None, None]:
+def get_emails(damage_report: DamageReport) -> Iterator[EMail]:
     """Yields notification emails."""
 
     for notification_email in NotificationEmail.select().where(
