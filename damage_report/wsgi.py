@@ -122,6 +122,7 @@ def delete_report(ident: int) -> JSONMessage:
 def get_attachment(ident: int) -> JSONMessage:
     """Returns the respective attachment."""
 
+    print('Called!', flush=True)
     mark = time()
     attachment = get_attachment(ident)
     print('Get from DB:', time() - mark, flush=True)
