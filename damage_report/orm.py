@@ -6,9 +6,10 @@ from datetime import datetime
 from peewee import BooleanField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
+from peewee import ModelSelect
 
 from filedb import File
-from mdb import Address, Customer
+from mdb import Address, Company, Customer
 from notificationlib import get_email_orm_model
 from peeweeplus import HTMLCharField, HTMLTextField, MySQLDatabase, JSONModel
 
@@ -35,8 +36,9 @@ class DamageReport(_DamageReportModel):
     class Meta:     # pylint: disable=C0111,R0903
         table_name = 'damage_report'
 
-    customer = ForeignKeyField(Customer, column_name='customer')
-    address = ForeignKeyField(Address, column_name='address')
+    customer = ForeignKeyField(
+        Customer, column_name='customer', lazy_load=False)
+    address = ForeignKeyField(Address, column_name='address', lazy_load=False)
     message = HTMLTextField()
     name = HTMLCharField(255)
     contact = HTMLCharField(255, null=True, default=None)
@@ -55,6 +57,16 @@ class DamageReport(_DamageReportModel):
         record.customer = customer
         record.address = address
         return record
+
+    @classmethod
+    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+        """Selects damage reports."""
+        if not cascade:
+            return super().select(*args, **kwargs)
+
+        args = {cls, Customer, Company, Address, *args}
+        return super().select(*args).join(Customer).join(Company).join_from(
+            cls, Address)
 
     def to_json(self, *, address: bool = True, attachments: bool = False,
                 **kwargs) -> dict:
@@ -78,7 +90,7 @@ class Attachment(_DamageReportModel):   # pylint: disable=R0903
 
     damage_report = ForeignKeyField(
         DamageReport, column_name='damage_report', backref='attachments',
-        on_delete='CASCADE')
+        on_delete='CASCADE', lazy_load=False)
     file = ForeignKeyField(File, column_name='file')
 
 
