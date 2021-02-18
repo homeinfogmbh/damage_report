@@ -3,6 +3,7 @@
 from __future__ import annotations
 from datetime import datetime
 
+from peewee import JOIN
 from peewee import BooleanField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
@@ -66,7 +67,7 @@ class DamageReport(_DamageReportModel):
 
         args = {cls, Customer, Company, Address, *args}
         return super().select(*args).join(Customer).join(Company).join_from(
-            cls, Address)
+            cls, Address, join_type=JOIN.LEFT_OUTER)
 
     def to_json(self, *, address: bool = True, attachments: bool = False,
                 **kwargs) -> dict:
@@ -92,6 +93,16 @@ class Attachment(_DamageReportModel):   # pylint: disable=R0903
         DamageReport, column_name='damage_report', backref='attachments',
         on_delete='CASCADE', lazy_load=False)
     file = ForeignKeyField(File, column_name='file')
+
+    @classmethod
+    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+        """Selects attachments."""
+        if not cascade:
+            return super().select(*args, **kwargs)
+
+        args = {cls, DamageReport, Customer, Company, Address, *args}
+        return super().select(*args).join(DamageReport).join(Customer).join(
+            Company).join_from(cls, Address, join_type=JOIN.LEFT_OUTER)
 
 
 NotificationEmail = get_email_orm_model(_DamageReportModel)

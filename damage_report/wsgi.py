@@ -51,7 +51,7 @@ def _get_attachment(ident: int) -> Attachment:
     condition &= DamageReport.customer == CUSTOMER.id
 
     try:
-        return Attachment.select().join(DamageReport).where(condition).get()
+        return Attachment.select(cascade=True).where(condition).get()
     except Attachment.DoesNotExist:
         raise NO_SUCH_ATTACHMENT from None
 
