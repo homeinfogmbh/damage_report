@@ -29,7 +29,7 @@ def _get_damage_reports(checked: bool = None) -> Iterable[DamageReport]:
     if checked is not None:
         expression &= DamageReport.checked == int(checked)
 
-    return DamageReport.select().where(expression)
+    return DamageReport.select(cascade=True).where(expression)
 
 
 def _get_damage_report(ident: int) -> DamageReport:
@@ -39,7 +39,7 @@ def _get_damage_report(ident: int) -> DamageReport:
     condition &= DamageReport.customer == CUSTOMER.id
 
     try:
-        return DamageReport.get(condition)
+        return DamageReport.select(cascade=True).where(condition).get()
     except DamageReport.DoesNotExist:
         raise NO_SUCH_REPORT from None
 
@@ -51,7 +51,7 @@ def _get_attachment(ident: int) -> Attachment:
     condition &= DamageReport.customer == CUSTOMER.id
 
     try:
-        return Attachment.select().join(DamageReport).where(condition).get()
+        return Attachment.select(cascade=True).where(condition).get()
     except Attachment.DoesNotExist:
         raise NO_SUCH_ATTACHMENT from None
 
