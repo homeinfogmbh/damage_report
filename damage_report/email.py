@@ -1,6 +1,6 @@
 """Emailing of new damage reports."""
 
-from typing import Iterator
+from typing import Iterator, Union
 
 from emaillib import EMail
 from notificationlib import get_email_func
@@ -12,8 +12,11 @@ from damage_report.orm import DamageReport, NotificationEmail
 __all__ = ['email']
 
 
-def get_emails(damage_report: DamageReport) -> Iterator[EMail]:
+def get_emails(damage_report: Union[DamageReport, int]) -> Iterator[EMail]:
     """Yields notification emails."""
+
+    damage_report = DamageReport.select(cascade=True).where(
+        DamageReport.id == damage_report).get()
 
     for notification_email in NotificationEmail.select().where(
             NotificationEmail.customer == damage_report.customer):
