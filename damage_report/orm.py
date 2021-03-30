@@ -42,7 +42,7 @@ class DamageReport(_DamageReportModel):
     address = ForeignKeyField(Address, column_name='address', lazy_load=False)
     message = HTMLTextField()
     name = HTMLCharField(255)
-    contact = HTMLCharField(255, null=True, default=None)
+    contact = HTMLCharField(255, null=True)
     damage_type = HTMLCharField(255)
     annotation = HTMLTextField(null=True)
     timestamp = DateTimeField(default=datetime.now)
