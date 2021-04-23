@@ -1,59 +1,21 @@
 """Authenticated and authorized HIS services."""
 
-from typing import Iterable
-
 from flask import request
 
 from his import CUSTOMER, authenticated, authorized, Application
 from notificationlib import get_wsgi_funcs
 from wsgilib import Binary, JSON, JSONMessage, get_bool
 
-from damage_report.messages import NO_SUCH_ATTACHMENT
-from damage_report.messages import NO_SUCH_REPORT
-from damage_report.messages import REPORT_DELETED
-from damage_report.messages import REPORT_PATCHED
-from damage_report.orm import Attachment, DamageReport, NotificationEmail
+from damage_report.functions import get_attachment
+from damage_report.functions import get_damage_report
+from damage_report.functions import get_damage_reports
+from damage_report.orm import NotificationEmail
 
 
 __all__ = ['APPLICATION']
 
 
 APPLICATION = Application('Damage Report', debug=True)
-
-
-def _get_damage_reports(checked: bool = None) -> Iterable[DamageReport]:
-    """Yields the customer's damage reports."""
-
-    expression = DamageReport.customer == CUSTOMER.id
-
-    if checked is not None:
-        expression &= DamageReport.checked == int(checked)
-
-    return DamageReport.select(cascade=True).where(expression)
-
-
-def _get_damage_report(ident: int) -> DamageReport:
-    """Returns the respective damage report."""
-
-    condition = DamageReport.id == ident
-    condition &= DamageReport.customer == CUSTOMER.id
-
-    try:
-        return DamageReport.select(cascade=True).where(condition).get()
-    except DamageReport.DoesNotExist:
-        raise NO_SUCH_REPORT from None
-
-
-def _get_attachment(ident: int) -> Attachment:
-    """Returns the respective attachment."""
-
-    condition = Attachment.id == ident
-    condition &= DamageReport.customer == CUSTOMER.id
-
-    try:
-        return Attachment.select(cascade=True).where(condition).get()
-    except Attachment.DoesNotExist:
-        raise NO_SUCH_ATTACHMENT from None
 
 
 @authenticated
@@ -66,7 +28,7 @@ def list_reports() -> JSON:
     checked = get_bool('checked')
     return JSON([
         damage_report.to_json(address=address, attachments=attachments)
-        for damage_report in _get_damage_reports(checked)])
+        for damage_report in get_damage_reports(CUSTOMER.id, checked=checked)])
 
 
 @authenticated
@@ -76,7 +38,7 @@ def get_report(ident: int) -> JSON:
 
     address = get_bool('address', True)
     attachments = get_bool('attachments')
-    return JSON(_get_damage_report(ident).to_json(
+    return JSON(get_damage_report(ident, CUSTOMER.id).to_json(
         address=address, attachments=attachments))
 
 
@@ -85,10 +47,10 @@ def get_report(ident: int) -> JSON:
 def patch_report(ident: int) -> JSONMessage:
     """patches the respective damage report."""
 
-    damage_report = _get_damage_report(ident)
+    damage_report = get_damage_report(ident, CUSTOMER.id)
     damage_report.patch_json(request.json)
     damage_report.save()
-    return REPORT_PATCHED
+    return JSONMessage('The report has been patched.', status=200)
 
 
 @authenticated
@@ -96,17 +58,17 @@ def patch_report(ident: int) -> JSONMessage:
 def delete_report(ident: int) -> JSONMessage:
     """Deletes the respective damage report."""
 
-    damage_report = _get_damage_report(ident)
+    damage_report = get_damage_report(ident, CUSTOMER.id)
     damage_report.delete_instance()
-    return REPORT_DELETED
+    return JSONMessage('The report has been deleted.', status=200)
 
 
 @authenticated
 @authorized('damage_report')
-def get_attachment(ident: int) -> JSONMessage:
+def get_attachment_(ident: int) -> JSONMessage:
     """Returns the respective attachment."""
 
-    return Binary(_get_attachment(ident).file.bytes)
+    return Binary(get_attachment(ident, CUSTOMER.id).file.bytes)
 
 
 GET_EMAILS, SET_EMAILS = get_wsgi_funcs('damage_report', NotificationEmail)
@@ -117,7 +79,7 @@ ROUTES = (
     ('GET', '/report/<int:ident>', get_report),
     ('PATCH', '/report/<int:ident>', patch_report),
     ('DELETE', '/report/<int:ident>', delete_report),
-    ('GET', '/attachment/<int:ident>', get_attachment),
+    ('GET', '/attachment/<int:ident>', get_attachment_),
     ('GET', '/email', GET_EMAILS),
     ('POST', '/email', SET_EMAILS)
 )

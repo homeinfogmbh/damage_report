@@ -3,7 +3,6 @@
 from __future__ import annotations
 from datetime import datetime
 
-from peewee import JOIN
 from peewee import BooleanField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
