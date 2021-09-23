@@ -6,6 +6,7 @@ from his import CUSTOMER, authenticated, authorized, Application
 from notificationlib import get_wsgi_funcs
 from wsgilib import Binary, JSON, JSONMessage, get_bool
 
+from damage_report.errors import ERRORS
 from damage_report.functions import get_attachment
 from damage_report.functions import get_damage_report
 from damage_report.functions import get_damage_reports
@@ -84,3 +85,7 @@ ROUTES = (
     ('POST', '/email', SET_EMAILS)
 )
 APPLICATION.add_routes(ROUTES)
+
+
+for exception, handler in ERRORS.items():
+    APPLICATION.register_error_handler(exception, handler)
