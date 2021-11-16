@@ -37,7 +37,7 @@ class DamageReport(_DamageReportModel):
         table_name = 'damage_report'
 
     customer = ForeignKeyField(
-        Customer, column_name='customer', lazy_load=False)
+        Customer, column_name='customer', on_delete='CASCADE', lazy_load=False)
     address = ForeignKeyField(Address, column_name='address', lazy_load=False)
     message = HTMLTextField()
     name = HTMLCharField(255)
