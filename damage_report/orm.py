@@ -11,15 +11,16 @@ from peewee import ModelSelect
 from filedb import File
 from mdb import Address, Company, Customer
 from notificationlib import get_email_orm_model
-from peeweeplus import HTMLCharField, HTMLTextField, MySQLDatabase, JSONModel
-
-from damage_report.config import CONFIG
+from peeweeplus import HTMLCharField
+from peeweeplus import HTMLTextField
+from peeweeplus import JSONModel
+from peeweeplus import MySQLDatabaseProxy
 
 
 __all__ = ['DamageReport', 'Attachment', 'NotificationEmail']
 
 
-DATABASE = MySQLDatabase.from_config(CONFIG['db'])
+DATABASE = MySQLDatabaseProxy('damage_report')
 
 
 class _DamageReportModel(JSONModel):    # pylint: disable=R0903
