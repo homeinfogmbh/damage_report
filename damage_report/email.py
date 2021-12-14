@@ -21,7 +21,7 @@ def get_emails(damage_report: Union[DamageReport, int]) -> Iterator[EMail]:
     for notification_email in NotificationEmail.select().where(
             NotificationEmail.customer == damage_report.customer):
         recipient = notification_email.email
-        sender = (config := get_config).get('email', 'from')
+        sender = (config := get_config()).get('email', 'from')
         subject = notification_email.subject or config.get('email', 'subject')
         subject = subject.format(
             damage_type=damage_report.damage_type,
