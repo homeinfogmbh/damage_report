@@ -29,9 +29,9 @@ def get_emails(damage_report: Union[DamageReport, int]) -> Iterator[EMail]:
             damage_type=damage_report.damage_type,
             address=damage_report.address
         )
-        message = 'Schadensmeldung "{}" von {} ({}):'.format(
-            damage_report.damage_type, damage_report.name,
-            damage_report.contact
+        message = (
+            f'Schadensmeldung "{damage_report.damage_type}" von '
+            f'{damage_report.name} ({damage_report.contact}):'
         )
 
         if notification_email.html:
