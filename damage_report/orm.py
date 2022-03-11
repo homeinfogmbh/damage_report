@@ -23,10 +23,10 @@ __all__ = ['DamageReport', 'Attachment', 'NotificationEmail']
 DATABASE = MySQLDatabaseProxy('damage_report')
 
 
-class _DamageReportModel(JSONModel):    # pylint: disable=R0903
+class _DamageReportModel(JSONModel):
     """Basic model for this database."""
 
-    class Meta:     # pylint: disable=C0111,R0903
+    class Meta:
         database = DATABASE
         schema = database.database
 
@@ -34,11 +34,12 @@ class _DamageReportModel(JSONModel):    # pylint: disable=R0903
 class DamageReport(_DamageReportModel):
     """Damage reports."""
 
-    class Meta:     # pylint: disable=C0111,R0903
+    class Meta:
         table_name = 'damage_report'
 
     customer = ForeignKeyField(
-        Customer, column_name='customer', on_delete='CASCADE', lazy_load=False)
+        Customer, column_name='customer', on_delete='CASCADE', lazy_load=False
+    )
     address = ForeignKeyField(Address, column_name='address', lazy_load=False)
     message = HTMLTextField()
     name = HTMLCharField(255)
@@ -60,14 +61,13 @@ class DamageReport(_DamageReportModel):
         return record
 
     @classmethod
-    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+    def select(cls, *args, cascade: bool = False) -> ModelSelect:
         """Selects damage reports."""
         if not cascade:
-            return super().select(*args, **kwargs)
+            return super().select(*args)
 
-        args = {cls, Customer, Company, Address, *args}
-        return super().select(*args).join(Customer).join(Company).join_from(
-            cls, Address)
+        return super().select(cls, Customer, Company, Address, *args).join(
+            Customer).join(Company).join_from(cls, Address)
 
     def to_json(self, *, address: bool = True, attachments: bool = False,
                 **kwargs) -> dict:
@@ -86,12 +86,13 @@ class DamageReport(_DamageReportModel):
         return json
 
 
-class Attachment(_DamageReportModel):   # pylint: disable=R0903
+class Attachment(_DamageReportModel):
     """Attachment to a damage report."""
 
     damage_report = ForeignKeyField(
         DamageReport, column_name='damage_report', backref='attachments',
-        on_delete='CASCADE', lazy_load=False)
+        on_delete='CASCADE', lazy_load=False
+    )
     file = ForeignKeyField(File, column_name='file')
 
     @classmethod

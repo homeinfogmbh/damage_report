@@ -29,7 +29,8 @@ def list_reports() -> JSON:
     checked = get_bool('checked')
     return JSON([
         damage_report.to_json(address=address, attachments=attachments)
-        for damage_report in get_damage_reports(CUSTOMER.id, checked=checked)])
+        for damage_report in get_damage_reports(CUSTOMER.id, checked=checked)
+    ])
 
 
 @authenticated
@@ -40,7 +41,8 @@ def get_report(ident: int) -> JSON:
     address = get_bool('address', True)
     attachments = get_bool('attachments')
     return JSON(get_damage_report(ident, CUSTOMER.id).to_json(
-        address=address, attachments=attachments))
+        address=address, attachments=attachments
+    ))
 
 
 @authenticated

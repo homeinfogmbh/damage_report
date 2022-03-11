@@ -25,8 +25,10 @@ def get_attachment(ident: int, customer: Union[Customer, int]) -> Attachment:
         raise JSONMessage('No such attachment.', status=404) from None
 
 
-def get_damage_report(ident: int,
-                      customer: Union[Customer, int]) -> DamageReport:
+def get_damage_report(
+        ident: int,
+        customer: Union[Customer, int]
+) -> DamageReport:
     """Returns the respective damage report."""
 
     condition = DamageReport.id == ident
@@ -38,8 +40,11 @@ def get_damage_report(ident: int,
         raise JSONMessage('No such report.', status=404) from None
 
 
-def get_damage_reports(customer: Union [Customer, int], *,
-                       checked: bool = None) -> ModelSelect:
+def get_damage_reports(
+        customer: Union[Customer, int],
+        *,
+        checked: bool = None
+) -> ModelSelect:
     """Yields the customer's damage reports."""
 
     expression = DamageReport.customer == customer
