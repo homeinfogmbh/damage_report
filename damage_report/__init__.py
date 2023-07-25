@@ -6,4 +6,4 @@ from damage_report.orm import DamageReport, Attachment
 from damage_report.wsgi import APPLICATION
 
 
-__all__ = ['APPLICATION', 'ERRORS', 'email', 'DamageReport', 'Attachment']
+__all__ = ["APPLICATION", "ERRORS", "email", "DamageReport", "Attachment"]
